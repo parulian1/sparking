@@ -25,13 +25,13 @@ class TransactionPaySerializer(serializers.Serializer):
 
 class TransactionResponseSerializer(serializers.ModelSerializer):
     time_in = serializers.SerializerMethodField()
-    # license_plate = serializers.SerializerMethodField()
+    license_plate = serializers.SerializerMethodField()
 
     def get_time_in(self, obj: Transaction):
         return datetime.datetime.fromtimestamp(obj.time_in/1000).strftime('%y-%m-%d %h:%m:%s')
 
-    # def get_license_plate(self, obj: Transaction):
-    #     return obj.vehicle.license_plate
+    def get_license_plate(self, obj: Transaction):
+        return obj.vehicle.license_plate
 
     class Meta:
         model = Transaction
@@ -39,5 +39,5 @@ class TransactionResponseSerializer(serializers.ModelSerializer):
             'id',
             'amount',
             'time_in',
-            # 'license_plate'
+            'license_plate'
         )

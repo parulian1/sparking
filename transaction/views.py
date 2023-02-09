@@ -1,4 +1,5 @@
 import datetime
+import json
 import math
 
 from django.shortcuts import render
@@ -26,6 +27,7 @@ class TransactionPayView(generics.GenericAPIView):
         create_serializer = self.get_serializer(data=request.data)
         create_serializer.is_valid(raise_exception=True)
         self.perform_update(create_serializer, instance)
+        self.generate_json_file(instance=instance)
         headers = self.get_success_headers(create_serializer.data)
         response_serializer = TransactionResponseSerializer(instance)
         return Response(response_serializer.data, status=status.HTTP_200_OK, headers=headers)
@@ -52,6 +54,9 @@ class TransactionPayView(generics.GenericAPIView):
         except (TypeError, KeyError):
             return {}
 
-
+    def generate_json_file(self, instance):
+        json_file = open('receipt.json', 'w+')
+        json_file.write(json.dumps(TransactionResponseSerializer(instance).data))
+        json_file.close()
 
 
