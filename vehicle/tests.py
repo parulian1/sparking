@@ -12,7 +12,7 @@ from vehicle.models import Vehicle
 
 # Create your tests here.
 class VehicleFactory(factory.django.DjangoModelFactory):
-    license_plate = factory.Faker('name')
+    license_plate = fuzzy.FuzzyText(length=12)
     type = fuzzy.FuzzyChoice([x[0] for x in Vehicle.MotorcycleType])
 
     class Meta:

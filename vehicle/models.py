@@ -1,4 +1,8 @@
+import json
+from typing import Type
+
 from django.db import models
+from django.dispatch import receiver
 from django.utils.translation import gettext_lazy as _
 
 # Create your models here.
@@ -18,3 +22,18 @@ class Vehicle(models.Model):
 
     class Meta:
         db_table = 'vehicle_vehicle'
+
+
+@receiver(models.signals.post_save, sender=Vehicle)
+def send_vehicle_information(sender: Type[Vehicle], instance: Vehicle, created: bool, **kwargs):
+    import pika
+
+    connection = pika.BlockingConnection(
+        pika.ConnectionParameters(host='localhost'))
+    channel = connection.channel()
+
+    channel.queue_declare(queue='vehicle')
+
+    from vehicle.serializers import VehicleSerializer
+    channel.basic_publish(exchange='', routing_key='vehicle', body=json.dumps(VehicleSerializer(instance).data))
+    connection.close()

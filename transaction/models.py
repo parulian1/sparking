@@ -5,10 +5,11 @@ from django.db import models
 
 class Transaction(models.Model):
     id = models.UUIDField(max_length=15, primary_key=True)
-    time_in = models.IntegerField()
+    time_in = models.IntegerField(null=True)
     vehicle = models.ForeignKey('Vehicle', blank=True, null=True, on_delete=models.DO_NOTHING)
-    amount = models.IntegerField()
+    amount = models.IntegerField(default=0, null=True)
     is_paid = models.BooleanField(default=False)
+    created = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         db_table = 'transaction_transaction'
